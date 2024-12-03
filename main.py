@@ -1,7 +1,10 @@
 import psutil
+import os
+import sys
+import ctypes
 import pygetwindow as gw
 import win32api, win32process, win32con  # type: ignore
-from captcha_solver import solve_TangKiemNgoaiTruyen_pattern
+from captcha_solver import recognize_pattern
 from read_write_memory import ReadWriteMemory
 from tcvn3_to_unicode import TCVN3_to_unicode
 from time import sleep
@@ -50,7 +53,7 @@ def solve_captcha_from_process(pid):
         if captcha:
             print(f"Captcha retrieved from pid {pid}: ", TCVN3_to_unicode(captcha))
             try:
-                result = solve_TangKiemNgoaiTruyen_pattern(TCVN3_to_unicode(captcha))
+                result = recognize_pattern(TCVN3_to_unicode(captcha))
                 if result:
                     print(f"Captcha solved for pid {pid}: {result}")
                     return result
@@ -82,14 +85,36 @@ def main():
                         print()  # Empty line after sending keys
                     else:
                         print(f"No valid captcha solution for pid {pid}.")
-                sleep(2)  # Delay before checking again
+                #sleep(2)  # Delay before checking again
+                sleep(0.01)
             else:
                 print(f"No windows found for process {process_name}.")
-                sleep(4)  # Wait before checking again if no windows are found
+                sleep(2)  # Wait before checking again if no windows are found
         except Exception as e:
             print(f"An unexpected error occurred: {e}")
-            sleep(4)  # Wait before retrying in case of an error
+            sleep(2)  # Wait before retrying in case of an error
 
-# Run the main program
-if __name__ == "__main__":
-    main()
+
+def temp_main():
+    process_name = "so2game.exe"
+    while True:
+        try:
+            hwnd_pid_map = get_hwnds_from_process_name(process_name)
+            if hwnd_pid_map:
+                for hwnd, pid in hwnd_pid_map.items():
+                    # Ensure the process is still running before accessing it
+                    captcha_result = solve_captcha_from_process(pid)
+                    if captcha_result:
+                        print(captcha_result)
+                    else:
+                        print(f"No valid captcha solution for pid {pid}.")
+                    sleep(2)
+            else:
+                print(f"No windows found for process {process_name}.")
+                sleep(2)  # Wait before checking again if no windows are found
+        except Exception as e:
+            print(f"An unexpected error occurred: {e}")
+            sleep(2)  # Wait before retrying in case of an error
+
+main()
+                
