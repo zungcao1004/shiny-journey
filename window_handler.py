@@ -36,12 +36,12 @@ def monitor_and_solve_captcha(process_name):
                     captcha_solution = get_captcha_solution(pid)
                     if captcha_solution:
                         send_key(hwnd, captcha_solution)
-                        # send_key(hwnd, "escape")
+                        send_key(hwnd, "enter")
                         print()  # Empty line after sending keys
                     else:
                         print(f"No valid captcha solution for pid {pid}.")
                 # sleep(2)  # Delay before checking again
-                sleep(0.1)
+                sleep(0.01)
             else:
                 print(f"No windows found for process {process_name}.")
                 sleep(2)  # Wait before checking again if no windows are found
