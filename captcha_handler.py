@@ -6,7 +6,7 @@ from read_memory import (
     close_handle,            # Function to close the handle to the process
 )
 from word_processor import convert_tcvn3_to_unicode  # Function to convert TCVN3 encoded text to Unicode
-
+from captcha_solver import recognize_pattern
 
 def get_captcha(pid):
     """
@@ -50,5 +50,27 @@ def get_captcha(pid):
         print(f"Error accessing process {pid}: {e}")
         return None
 
+def get_captcha_solution(pid):
+    try:
+        captcha_value = get_captcha(pid)
 
+        if captcha_value:
+            print(f"Captcha retrieved from pid {pid}: ", captcha_value)
+            try:
+                result = recognize_pattern(captcha_value)
+                if result:
+                    print(f"Captcha solved for pid {pid}: {result}")
+                    return result
+                else:
+                    print(f"Captcha solving failed for pid {pid}.")
+                    return None
+            except Exception as e:
+                print(f"Error solving captcha for pid {pid}: {e}")
+                return None
+        else:
+            print(f"Failed to retrieve CAPTCHA or CAPTCHA is empty from pid {pid}.")
+            return None
+    except Exception as e:
+        print(f"Error accessing process {pid}: {e}")
+        return None
 
