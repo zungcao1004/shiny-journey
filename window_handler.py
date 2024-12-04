@@ -2,7 +2,7 @@ import win32process
 import psutil
 import pygetwindow as gw
 from time import sleep
-from key_sender import send_key
+from key_sender import send_keys
 from captcha_handler import get_captcha_solution
 
 
@@ -35,13 +35,12 @@ def monitor_and_solve_captcha(process_name):
                     # Ensure the process is still running before accessing it
                     captcha_solution = get_captcha_solution(pid)
                     if captcha_solution:
-                        send_key(hwnd, captcha_solution)
-                        send_key(hwnd, "enter")
+                        send_keys(hwnd, [captcha_solution, "escape"], delay=0.1)
                         print()  # Empty line after sending keys
                     else:
                         print(f"No valid captcha solution for pid {pid}.")
                 # sleep(2)  # Delay before checking again
-                sleep(0.01)
+                sleep(0.1)
             else:
                 print(f"No windows found for process {process_name}.")
                 sleep(2)  # Wait before checking again if no windows are found
