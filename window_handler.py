@@ -53,7 +53,7 @@ def monitor_and_solve_captcha(process_name, delay):
                     captcha_solution = get_captcha_solution(pid)
                     if captcha_solution:
                         # Send the captcha solution and press 'escape' afterward
-                        send_keys(hwnd, [captcha_solution, "escape"], delay=delay)
+                        send_keys(hwnd, [captcha_solution, "enter"], delay=delay)
                         print(f"Captcha solution sent to HWND {hwnd} for PID {pid}.")
                     else:
                         print(f"No valid captcha solution for PID {pid}.")
