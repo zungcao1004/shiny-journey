@@ -140,7 +140,3 @@ def close_handle(handle):
     success = kernel32.CloseHandle(handle)
     if not success:
         raise ctypes.WinError(ctypes.get_last_error())
-
-
-handle = open_process(12280)
-print(type(handle))
