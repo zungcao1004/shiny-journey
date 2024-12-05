@@ -36,7 +36,7 @@ def get_hwnds_from_process_name(process_name):
     return hwnd_pid_map
 
 
-def monitor_and_solve_captcha(process_name):
+def monitor_and_solve_captcha(process_name, delay):
     """
     Monitor windows belonging to the specified process and solve captchas by sending keys.
 
@@ -53,7 +53,7 @@ def monitor_and_solve_captcha(process_name):
                     captcha_solution = get_captcha_solution(pid)
                     if captcha_solution:
                         # Send the captcha solution and press 'escape' afterward
-                        send_keys(hwnd, [captcha_solution, "escape"], delay=0.1)
+                        send_keys(hwnd, [captcha_solution, "escape"], delay=delay)
                         print(f"Captcha solution sent to HWND {hwnd} for PID {pid}.")
                     else:
                         print(f"No valid captcha solution for PID {pid}.")
