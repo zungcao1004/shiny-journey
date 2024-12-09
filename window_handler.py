@@ -3,7 +3,7 @@ import psutil
 import pygetwindow as gw
 from time import sleep
 from key_sender import send_keys
-from captcha_handler import get_captcha_solution
+from captcha_handler import get_captcha, get_captcha_solution
 
 
 def get_hwnds_from_process_name(process_name):
@@ -52,12 +52,11 @@ def monitor_and_solve_captcha(process_name, delay):
                     # Solve the captcha for the given process
                     captcha_solution = get_captcha_solution(pid)
                     if captcha_solution:
-                        # Send the captcha solution and press 'escape' afterward
-                        send_keys(hwnd, [captcha_solution, "enter"], delay=delay)
+                        send_keys(hwnd, [captcha_solution, "escape", "escape", "escape"], delay=delay)
                         print(f"Captcha solution sent to HWND {hwnd} for PID {pid}.")
                     else:
                         print(f"No valid captcha solution for PID {pid}.")
-                sleep(0.1)  # Short delay before checking again
+                # sleep(0.01)  # Short delay before checking again
             else:
                 print(f"No windows found for process '{process_name}'.")
                 sleep(2)  # Wait before checking again if no windows are found
@@ -67,5 +66,35 @@ def monitor_and_solve_captcha(process_name, delay):
             sleep(2)  # Wait before retrying to avoid rapid failures
 
 
-# Example usage:
-# monitor_and_solve_captcha("so2game.exe")
+def get_captcha_pattern(process_name, delay):
+    """
+    Monitor windows belonging to the specified process and solve captchas by sending keys.
+
+    Args:
+        process_name (str): Name of the process to monitor (case insensitive).
+    """
+    while True:
+        try:
+            # Retrieve window handles and process IDs for the target process
+            hwnd_pid_map = get_hwnds_from_process_name(process_name)
+            if hwnd_pid_map:
+                for hwnd, pid in hwnd_pid_map.items():
+                    # Solve the captcha for the given process
+                    captcha_value = get_captcha(pid)
+                    if captcha_value:
+                        send_keys(hwnd, ["escape", "escape", "escape"], delay=delay)
+                        # print(f"Captcha solution sent to HWND {hwnd} for PID {pid}.")
+                        # store captcha_value to a text file
+                        with open("captchas.txt", "a", encoding="utf-8") as file:
+                            file.write(f"{captcha_value}\n")
+                            file.write(f"{get_captcha_solution(pid)}")
+                    else:
+                        print(f"No valid captcha solution for PID {pid}.")
+                # sleep(0.01)  # Short delay before checking again
+            else:
+                print(f"No windows found for process '{process_name}'.")
+                sleep(2)  # Wait before checking again if no windows are found
+        except Exception as e:
+            # Log and handle unexpected errors
+            print(f"An unexpected error occurred: {e}")
+            sleep(2)  # Wait before retrying to avoid rapid failures

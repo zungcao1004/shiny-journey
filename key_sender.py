@@ -2,7 +2,7 @@ import time
 import win32api
 import win32con
 
-def send_key(hwnd, key, delay=0.0):
+def send_key(hwnd, key, delay=0.001):
     """
     Sends a single key press to the specified window.
 
@@ -46,12 +46,10 @@ def send_key(hwnd, key, delay=0.0):
         # Send the key down event (simulate pressing the key)
         win32api.PostMessage(hwnd, win32con.WM_KEYDOWN, key_code, 0)
         
-        # Optional delay for more realistic key press behavior
+        # # Optional delay for more realistic key press behavior
         if delay > 0:
             time.sleep(delay)
         
-        # Send the key up event (simulate releasing the key)
-        win32api.PostMessage(hwnd, win32con.WM_KEYUP, key_code, 0)
 
     except Exception as e:
         # Log the error for debugging
@@ -71,9 +69,30 @@ def send_keys(hwnd, keys, delay=0.0):
         ValueError: If any key in the sequence is invalid or unsupported.
     """
     try:
-        # Iterate over each key in the sequence
+        # Process the keys to split numbers greater than 9 into individual digits
+        expanded_keys = []
         for key in keys:
+            if key.isdigit() and int(key) > 9:  # Check if the key is a digit and greater than 9
+                expanded_keys.extend(list(key))  # Split the number into individual digits
+            else:
+                expanded_keys.append(key)
+
+        # Iterate over each key in the expanded sequence
+        for key in expanded_keys:
             send_key(hwnd, key, delay)  # Send each key individually
     except Exception as e:
         # Log any error that occurs during the sequence
         print(f"Error sending keys {keys} to hwnd {hwnd}: {e}")
+
+
+def keys_test(keys):
+    expanded_keys = []
+    for key in keys:
+        if key.isdigit() and int(key) > 9:  # Check if the key is a digit and greater than 9
+            expanded_keys.extend(list(key))  # Split the number into individual digits
+        else:
+            expanded_keys.append(key)
+    print(expanded_keys)
+
+# keys_test(keys=["10", "escape", "escape", "escape"])
+# print(ord(1))

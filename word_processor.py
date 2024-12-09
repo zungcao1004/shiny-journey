@@ -9,7 +9,20 @@ vietnamese_to_digit = {
     "bảy": 7,
     "tám": 8,
     "chín": 9,
+    "chứn": 9,
+    "mười": 10,
+    "mười một": 11,
+    "mười hai": 12,
+    "mười ba": 13,
+    "mười bốn": 14,
+    "mười năm": 15,
+    "mười sáu": 16,
+    "mười bảy": 17,
+    "mười tám": 18,
+    "mười chín": 19,
+    "hai mươi": 20,
 }
+
 tcvn3_to_unicode = {
     "Aµ": "À",
     "A¸": "Á",
@@ -148,8 +161,6 @@ tcvn3_to_unicode = {
 }
 
 
-import unicodedata
-
 # Function to convert TCVN3 encoded text to Unicode
 def convert_tcvn3_to_unicode(tcvn3_text: str) -> str:
     """
@@ -182,30 +193,12 @@ def calculate_similarity(word1: str, word2: str) -> float:
     """
     word1, word2 = word1.lower(), word2.lower()
     
-    # Strip accents if required
-    word1 = remove_accents(word1)
-    word2 = remove_accents(word2)
 
     set1, set2 = set(word1), set(word2)
     matches = len(set1 & set2)  # Intersection of character sets
     normalized_score = matches / ((len(word1) + len(word2)) / 2)
     
     return normalized_score
-
-
-# Helper function to remove accents from Vietnamese characters
-def remove_accents(input_str: str) -> str:
-    """
-    Removes accents from a given string.
-    
-    Args:
-        input_str (str): The string from which accents need to be removed.
-    
-    Returns:
-        str: The string without accents.
-    """
-    nfkd_form = unicodedata.normalize('NFKD', input_str)
-    return ''.join([c for c in nfkd_form if not unicodedata.combining(c)])
 
 
 # Function to normalize a Vietnamese word to its closest valid match
@@ -260,3 +253,11 @@ def preprocess_word(input_word: str) -> str:
         return None
 
 
+# test_inputs = ["Mườii", "MườiiMột", "MườiHaii", "MườiiBa", "MườiiBốn", "MườiiNăm", "MườiSáuu", "MườiBbảy", "HhaiMươi"]
+# test_input = "chƯn"
+# print(preprocess_word(test_input))
+# for test_input in test_inputs:
+#     print(f"Input: {test_input}")
+#     digit = preprocess_word(test_input)
+#     print(f"Converted Digit: {digit}")
+#     print("-" * 30)

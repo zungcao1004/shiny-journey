@@ -1,0 +1,1 @@
+character_name_address = 0x0086E1F4
